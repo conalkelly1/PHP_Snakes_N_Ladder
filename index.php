@@ -1,25 +1,25 @@
 <?php
+define('GAME_SESSION_KEY', 'game');
 require "factories/board_factory.php";
 require "models/player.php";
 require "models/dice.php";
 require "models/game.php";
 
+/**
+ * SESSION will have shape of
+ * SESSION -> Game
+ * Game -> Player 1 etc
+ */
+
 session_start();
 $boardFactory = new BoardFactory();
 $board = $boardFactory->create(36);
 
-$playerOne = !isset($_SESSION['playerOne'])
-    ? new Player("Player1", 0, 0)
-    : $_SESSION['playerOne'];
-
-$playerTwo = !isset($_SESSION['playerTwo'])
-    ? new Player("Player2", 0, 0)
-    : $_SESSION['playerTwo'];
-
-
 $dice = new Dice(6);
 
-$game = new Game($playerOne, $playerTwo, $board, $dice, Game::$PLAYER_ONE_TURN, 1, Game::$STATE_IN_PROGRESS);
+$game = !isset($_SESSION[GAME_SESSION_KEY])
+    ? new Game(new Player("Player1", 0, 0), new Player("Player2", 0, 0), $board, $dice, Game::$PLAYER_ONE_TURN, 1, Game::$STATE_IN_PROGRESS)
+    : $_SESSION[GAME_SESSION_KEY];
 
 
 if (isset($_POST['action']) && $_POST['action'] == "roll") {
@@ -32,8 +32,7 @@ if (isset($_POST['action']) && $_POST['action'] == "reset") {
 
 $game->render();
 
-$_SESSION['playerOne'] = $game->playerOne;
-$_SESSION['playerTwo'] = $game->playerTwo;
+$_SESSION[GAME_SESSION_KEY] = $game;
 ?>
 
 <form action="" method="post">
