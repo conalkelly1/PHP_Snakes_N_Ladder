@@ -24,6 +24,7 @@ $game = !isset($_SESSION[GAME_SESSION_KEY])
 
 if (isset($_POST['action']) && $_POST['action'] == "roll") {
     $game->rollDice();
+
 }
 
 if (isset($_POST['action']) && $_POST['action'] == "reset") {

@@ -35,11 +35,13 @@ class Game
             {
                 $this->_rollDice($this->playerOne);
                 $this->currentTurn = Game::$PLAYER_TWO_TURN;
+                $this->checkWin($this->playerOne);
             }
             else
             {
                 $this->_rollDice($this->playerTwo);
                 $this->currentTurn = Game::$PLAYER_ONE_TURN;
+                $this->checkWin($this->playerTwo);
             }
     }
 
@@ -53,6 +55,16 @@ class Game
         $player->y += $rowsToIncrease;
 
         echo "dice roll was " . $diceRollValue;
+    }
+
+    function checkWin($player)
+    {
+        if($player->x == 5 && $player->y == 5)
+        {
+            echo $player->name ." wins";
+            $this->reset();
+        }
+        
     }
 
     function reset()
