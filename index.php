@@ -1,5 +1,7 @@
 <?php
 define('GAME_SESSION_KEY', 'game');
+require "system/actions.php";
+require "system/action_handler.php";
 require "factories/board_factory.php";
 require "models/player.php";
 require "models/dice.php";
@@ -22,14 +24,16 @@ $game = !isset($_SESSION[GAME_SESSION_KEY])
     : $_SESSION[GAME_SESSION_KEY];
 
 
-if (isset($_POST['action']) && $_POST['action'] == "roll") {
-    $game->rollDice();
-
-}
-
-if (isset($_POST['action']) && $_POST['action'] == "reset") {
-    $game->reset();
-}
+handleActions(function ($action) use ($game) {
+    switch ($action) {
+        case ACTION_ROLL:
+            $game->rollDice();
+            break;
+        case ACTION_RESET:
+            $game->reset();
+            break;
+    }
+});
 
 $game->render();
 

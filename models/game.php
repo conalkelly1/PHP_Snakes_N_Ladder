@@ -31,18 +31,12 @@ class Game
 
     function rollDice()
     {
-            if($this->currentTurn == Game::$PLAYER_ONE_TURN)
-            {
-                $this->_rollDice($this->playerOne);
-                $this->currentTurn = Game::$PLAYER_TWO_TURN;
-                $this->checkWin($this->playerOne);
-            }
-            else
-            {
-                $this->_rollDice($this->playerTwo);
-                $this->currentTurn = Game::$PLAYER_ONE_TURN;
-                $this->checkWin($this->playerTwo);
-            }
+        $activePlayer = $this->currentTurn == Game::$PLAYER_ONE_TURN ? $this->playerOne : $this->playerTwo;
+
+        $this->_rollDice($activePlayer);
+        $this->checkWin($activePlayer);
+
+        $this->currentTurn = $this->currentTurn == Game::$PLAYER_ONE_TURN ? Game::$PLAYER_TWO_TURN : Game::$PLAYER_ONE_TURN;
     }
 
     private function _rollDice($player)
@@ -59,18 +53,17 @@ class Game
 
     function checkWin($player)
     {
-        if($player->x == 5 && $player->y == 5)
-        {
-            echo $player->name ." wins";
+        if ($player->x == 5 && $player->y == 5) {
+            echo "<h1>" . $player->name . " wins!</h1>";
             $this->reset();
         }
-        
     }
 
     function reset()
     {
         $this->playerOne = new Player("Player1", 0, 0);
         $this->playerTwo = new Player("Player2", 0, 0);
+        $this->currentTurn = Game::$PLAYER_ONE_TURN;
     }
 
     function render()
