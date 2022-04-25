@@ -15,6 +15,9 @@ class Game
     public static $STATE_IN_PROGRESS = 1;
     public static $STATE_FINISHED = 2;
 
+    public static $PLAYER_ONE_TURN = 1;
+    public static $PLAYER_TWO_TURN = 2;
+
     function __construct($playerOne, $playerTwo, $board, $dice, $currentTurn, $currentRound, $state)
     {
         $this->playerOne = $playerOne;
@@ -26,7 +29,21 @@ class Game
         $this->state = $state;
     }
 
-    function rollDice($player)
+    function rollDice()
+    {
+            if($this->currentTurn == Game::$PLAYER_ONE_TURN)
+            {
+                $this->_rollDice($this->playerOne);
+                $this->currentTurn = Game::$PLAYER_TWO_TURN;
+            }
+            else
+            {
+                $this->_rollDice($this->playerTwo);
+                $this->currentTurn = Game::$PLAYER_ONE_TURN;
+            }
+    }
+
+    private function _rollDice($player)
     {
         $diceRollValue = $this->dice->rollDice();
         $player->x += $diceRollValue;

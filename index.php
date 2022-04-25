@@ -19,11 +19,11 @@ $playerTwo = !isset($_SESSION['playerTwo'])
 
 $dice = new Dice(6);
 
-$game = new Game($playerOne, $playerTwo, $board, $dice, 'playerOne', 1, Game::$STATE_IN_PROGRESS);
+$game = new Game($playerOne, $playerTwo, $board, $dice, Game::$PLAYER_ONE_TURN, 1, Game::$STATE_IN_PROGRESS);
 
 
 if (isset($_POST['action']) && $_POST['action'] == "roll") {
-    $game->rollDice($playerOne);
+    $game->rollDice();
 }
 
 if (isset($_POST['action']) && $_POST['action'] == "reset") {
