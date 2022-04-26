@@ -14,15 +14,22 @@ require "models/game.php";
  */
 
 session_start();
-$boardFactory = new BoardFactory();
-$board = $boardFactory->create(36);
 
-$dice = new Dice(6);
+function createGame()
+{
+    $dice = new Dice(6);
+    $game = null;
+    if (!isset($_SESSION[GAME_SESSION_KEY])) {
+        $boardFactory = new BoardFactory();
+        $board = $boardFactory->create(36);
 
-$game = !isset($_SESSION[GAME_SESSION_KEY])
-    ? new Game(new Player("Player1", 0, 0), new Player("Player2", 0, 0), $board, $dice, Game::$PLAYER_ONE_TURN, 1, Game::$STATE_IN_PROGRESS)
-    : $_SESSION[GAME_SESSION_KEY];
-
+        $game = new Game(new Player("Player1", 0, 0), new Player("Player2", 0, 0), $board, $dice, Game::$PLAYER_ONE_TURN, 1, Game::$STATE_IN_PROGRESS);
+    } else {
+        $game =  $_SESSION[GAME_SESSION_KEY];
+    }
+    return $game;
+}
+$game = createGame();
 
 handleActions(function ($action) use ($game) {
     switch ($action) {
@@ -30,7 +37,10 @@ handleActions(function ($action) use ($game) {
             $game->rollDice();
             break;
         case ACTION_RESET:
+            session_destroy();
+            $game = createGame();
             $game->reset();
+
             break;
     }
 });

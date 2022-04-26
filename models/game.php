@@ -42,13 +42,36 @@ class Game
     private function _rollDice($player)
     {
         $diceRollValue = $this->dice->rollDice();
+        echo "dice roll was " . $diceRollValue ."<br>";
+        if($player->y == 5 && $player->x + $diceRollValue > 5)
+        {
+            echo "BUSTED - Lose a Turn";
+            return;
+        }
+    
         $player->x += $diceRollValue;
 
         $rowsToIncrease = intdiv($player->x, 6);
         $player->x = $player->x % 6;
         $player->y += $rowsToIncrease;
 
-        echo "dice roll was " . $diceRollValue;
+        $currentTile = $this->getPlayersCurrentTile($player);
+
+        if($currentTile->type == Tile::$TILETYPE_WORMHOLE)
+        {
+            $finalWormholePosition = rand($currentTile->number + 1,count($this->board->tiles) - 2)-1;
+            $player->x = $finalWormholePosition % 6;
+            $player->y =  intdiv($finalWormholePosition,6);
+            echo "You found a wormhole! @ ". $currentTile->number ." exiting at ". $finalWormholePosition + 1;
+
+        }
+    }
+
+    private function getPlayersCurrentTile($player)
+    {
+        $lengthOfSide = sqrt(count($this->board->tiles));
+        $tileIndex = $player->y * $lengthOfSide + $player->x;
+        return $this->board->tiles[$tileIndex];
     }
 
     function checkWin($player)
