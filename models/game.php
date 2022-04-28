@@ -65,6 +65,13 @@ class Game
             echo "You found a wormhole! @ ". $currentTile->number ." exiting at ". $finalWormholePosition + 1;
 
         }
+        elseif($currentTile->type == Tile::$TILETYPE_BLACKHOLE)
+        {
+            $finalBlackholePosition = rand(0,$currentTile->number-1);
+            $player->x = $finalBlackholePosition % 6;
+            $player->y =  intdiv($finalBlackholePosition,6);
+            echo "You found a Blackhole! @ ". $currentTile->number ." exiting at ". $finalBlackholePosition + 1;
+        }
     }
 
     private function getPlayersCurrentTile($player)
