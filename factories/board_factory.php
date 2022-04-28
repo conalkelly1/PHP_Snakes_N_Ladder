@@ -22,7 +22,7 @@
 
             while(count($wormholeTileNumbers) < $numberOfWormholes)
             {
-                $randomTileNumber = rand(1,$numberOfTiles-1);
+                $randomTileNumber = rand(1,$numberOfTiles-2);
 
                 if(!in_array($randomTileNumber,$wormholeTileNumbers))
                 {

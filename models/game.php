@@ -59,7 +59,7 @@ class Game
 
         if($currentTile->type == Tile::$TILETYPE_WORMHOLE)
         {
-            $finalWormholePosition = rand($currentTile->number + 1,count($this->board->tiles) - 2)-1;
+            $finalWormholePosition = rand($currentTile->number + 1,count($this->board->tiles) - 1)-1;
             $player->x = $finalWormholePosition % 6;
             $player->y =  intdiv($finalWormholePosition,6);
             echo "You found a wormhole! @ ". $currentTile->number ." exiting at ". $finalWormholePosition + 1;
