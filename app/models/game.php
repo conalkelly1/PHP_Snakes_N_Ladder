@@ -33,19 +33,23 @@ class Game
     {
         $activePlayer = $this->currentTurn == Game::$PLAYER_ONE_TURN ? $this->playerOne : $this->playerTwo;
 
-        $this->_rollDice($activePlayer);
-        $this->checkWin($activePlayer);
+        $json_response = $this->_rollDice($activePlayer);
+        $winner = $this->checkWin($activePlayer);
 
         $this->currentTurn = $this->currentTurn == Game::$PLAYER_ONE_TURN ? Game::$PLAYER_TWO_TURN : Game::$PLAYER_ONE_TURN;
+
+        $json_response->game = $this;
+        $json_response->winner = $winner;
+        return $json_response;
     }
 
     private function _rollDice($player)
     {
         $diceRollValue = $this->dice->rollDice();
-        echo "dice roll was " . $diceRollValue . "<br>";
+        // echo "dice roll was " . $diceRollValue . "<br>";
         if ($player->y == 5 && $player->x + $diceRollValue > 5) {
-            echo "BUSTED - Lose a Turn";
-            return;
+            // echo "BUSTED - Lose a Turn";
+            return new JsonResponse($this, $diceRollValue, null, null, null, null, null, null, true, null);
         }
 
         $player->x += $diceRollValue;
@@ -56,17 +60,26 @@ class Game
 
         $currentTile = $this->getPlayersCurrentTile($player);
 
+        $wormholePosition = null;
+        $wormholeExitPosition = null;
+        $blackholePosition = null;
+        $blackholeExitPosition = null;
         if ($currentTile->type == Tile::$TILETYPE_WORMHOLE) {
             $finalWormholePosition = rand($currentTile->number + 1, count($this->board->tiles) - 1) - 1;
             $player->x = $finalWormholePosition % 6;
             $player->y =  intdiv($finalWormholePosition, 6);
-            echo "You found a wormhole! @ " . $currentTile->number . " exiting at " . $finalWormholePosition + 1;
+            $wormholePosition = $currentTile->number;
+            $wormholeExitPosition = $finalWormholePosition;
+            // echo "You found a wormhole! @ " . $currentTile->number . " exiting at " . $finalWormholePosition + 1;
         } elseif ($currentTile->type == Tile::$TILETYPE_BLACKHOLE) {
             $finalBlackholePosition = rand(0, $currentTile->number - 1);
             $player->x = $finalBlackholePosition % 6;
             $player->y =  intdiv($finalBlackholePosition, 6);
-            echo "You found a Blackhole! @ " . $currentTile->number . " exiting at " . $finalBlackholePosition + 1;
+            $blackholePosition = $currentTile->number;
+            $blackholeExitPosition = $finalBlackholePosition;
+            // echo "You found a Blackhole! @ " . $currentTile->number . " exiting at " . $finalBlackholePosition + 1;
         }
+        return new JsonResponse($this, $diceRollValue, $wormholePosition, $wormholeExitPosition, $blackholePosition, $blackholeExitPosition, null, null, null, null);
     }
 
     private function getPlayersCurrentTile($player)
@@ -79,7 +92,8 @@ class Game
     function checkWin($player)
     {
         if ($player->x == 5 && $player->y == 5) {
-            echo "<h1>" . $player->name . " wins!</h1>";
+            return $player->name;
+            // echo "<h1>" . $player->name . " wins!</h1>";
             $this->reset();
         }
     }

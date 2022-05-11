@@ -29,7 +29,7 @@
                 if(!in_array($randomTileNumber,$wormholeTileNumbers))
                 {
                     array_push($wormholeTileNumbers, $randomTileNumber);
-                    echo "<br> Wormhole @ ". $randomTileNumber ."<br>";
+                    // echo "<br> Wormhole @ ". $randomTileNumber ."<br>";
                 }
             }
             return $wormholeTileNumbers;
@@ -44,7 +44,7 @@
                 if(!in_array($randomTileNumber, $blackholeTileNumbers))
                 {
                     array_push($blackholeTileNumbers,$randomTileNumber);
-                    echo "<br> Blackhole @ ". $randomTileNumber ."<br>";
+                    // echo "<br> Blackhole @ ". $randomTileNumber ."<br>";
 
                 }
                 
@@ -54,5 +54,3 @@
         }
 
     }
-
-?>

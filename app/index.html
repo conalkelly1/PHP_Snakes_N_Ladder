@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wormholes and Blackholes</title>
+  </head>
+  <body lang="en">
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <main id="game">
+      <div class="header"></div>
+      <div id="board">
+        <template v-for="(tile, index) in getBoard?.tiles">
+          <div
+            style="
+              border: 2px solid black;
+              padding: 12px;
+              display: inline-flex;
+              height: 72px;
+              width: 72px;
+              text-align: center;
+              font-family: monospace;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+            "
+          >
+            <span v-if="index === getPlayerOneTileIndex"> Player 1 </span>
+            <span v-if="index === getPlayerTwoTileIndex"> Player 2 </span>
+            {{ tile.number }}
+          </div>
+          <br v-if="tile.number % 6 === 0" />
+        </template>
+      </div>
+      <div id="actions" style="margin-top: 24px">
+        <button type="button" @click="rollDice">Roll Dice</button>
+
+        <button type="button" @click="resetGame">Reset Game</button>
+
+        <button type="button" @click="saveGame">Save Game</button>
+
+        <input
+          type="text"
+          name="game_id"
+          placeholder="Game ID"
+          v-model="loadGameIdInput"
+        />
+        <button type="button" @click="loadGame">Load Game</button>
+      </div>
+      <div class="feedback">
+        <div>
+          Current turn: {{game.currentTurn === TURN_PLAYER_ONE ? 'Player 1' :
+          'Player 2'}}
+        </div>
+        <div>Previous Turn Results:</div>
+        <div v-if="diceRollValue">
+          Dice roll was {{diceRollValue}}<br />
+
+          <span v-if="didPlayerBust">Busted! Cannot move beyond the board</span>
+        </div>
+        <div v-if="loadGameResponse">{{loadGameResponse}}</div>
+        <div v-if="saveGameResponse">{{saveGameResponse}}</div>
+        <div v-if="wormhole">
+          Found a wormhole at {{wormhole.entry+1}}! Player has teleported to
+          {{wormhole.exit+1}}.
+        </div>
+        <div v-if="blackhole">
+          Found a blackhole at {{blackhole.entry+1}}! Player has teleported to
+          {{blackhole.exit+1}}.
+        </div>
+        <div v-if="winner">{{winner}} won the game!!</div>
+      </div>
+    </main>
+
+    <script src="index.js" type="text/javascript"></script>
+  </body>
+</html>

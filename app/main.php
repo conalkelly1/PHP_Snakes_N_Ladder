@@ -1,5 +1,5 @@
 <?php
-
+header('Content-Type: application/json; charset=utf-8');
 define('GAME_SESSION_KEY', 'game');
 require "system/db.php";
 require "system/actions.php";
@@ -8,6 +8,7 @@ require "factories/board_factory.php";
 require "models/player.php";
 require "models/dice.php";
 require "models/game.php";
+require "models/json_response.php";
 
 /**
  * SESSION will have shape of
@@ -36,62 +37,40 @@ $game = createGame();
 
 handleActions(function ($action) use ($game, $db) {
     switch ($action) {
+        case ACTION_GET_GAME:
+            echo json_encode(new JsonResponse($game, null, null, null, null, null, null, null, null, null));
+            break;
         case ACTION_ROLL:
-            $game->rollDice();
+            $json_response = $game->rollDice();
+            if ($json_response->winner) {
+                session_destroy();
+                $game = createGame();
+                $game->reset();
+                $json_response->game = $game;
+            }
+            echo json_encode($json_response);
             break;
         case ACTION_RESET:
             session_destroy();
             $game = createGame();
             $game->reset();
+            echo json_encode(new JsonResponse($game, null, null, null, null, null, null, null, null, null));
             break;
         case ACTION_SAVE:
             $gameId = $game->saveGame($db);
-            echo "Game saved! Use game ID " . $gameId . " to load the game!";
             session_destroy();
             $game = createGame();
             $game->reset();
+            echo json_encode(new JsonResponse($game, null, null, null, null, null, null, "Game saved! Use game ID " . $gameId . " to load the game!", null, null));
             break;
         case ACTION_LOAD:
-            $game = $game->loadGame($db, $_POST['game_id']);
-            if ($game == 0) {
-                echo "Could not find game with ID " . $game;
-            } else if ($game == 1) {
-                echo "Loaded game!";
-            }
+            $gameId = $game->loadGame($db, $_POST['game_id']);
+            $loadRes = $gameId == 0 ? "Could not find game with ID " . $gameId : "Loaded game!";
 
+            echo json_encode(new JsonResponse($game, null, null, null, null, null, $loadRes, null, null, null));
             break;
     }
+    $_SESSION[GAME_SESSION_KEY] = $game;
 });
 
-$game->render();
-
-$_SESSION[GAME_SESSION_KEY] = $game;
-?>
-
-<form action="" method="post">
-
-    <input type="hidden" name="action" value="roll" />
-    <button type="submit"> Roll Dice </button>
-
-</form>
-<form action="" method="post">
-
-    <input type="hidden" name="action" value="reset" />
-    <button type="submit"> Reset Game </button>
-
-</form>
-
-<form action="" method="post">
-
-    <input type="hidden" name="action" value="save" />
-    <button type="submit"> Save Game </button>
-
-</form>
-
-<form action="" method="post">
-
-    <input type="hidden" name="action" value="load" />
-    <input type="text" name='game_id' placeholder="Game ID" />
-    <button type="submit"> Load Game </button>
-
-</form>
+// $game->render();
