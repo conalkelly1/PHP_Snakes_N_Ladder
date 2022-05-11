@@ -112,4 +112,28 @@ class Game
         $stmt->execute([':game' => $serializedGame]);
         return $db->pdo->lastInsertId();
     }
+
+    function loadGame($db, $gameId)
+    {
+        $stmt = $db->pdo->prepare("SELECT * FROM game WHERE id=:id");
+        $stmt->execute([':id' => $gameId]);
+
+        $dbResult = $stmt->fetchAll();
+
+        if (count($dbResult) == 0) {
+            return 0;
+        }
+
+        $loadedGame = unserialize($dbResult[0]['game_data']);
+        $this->playerOne = $loadedGame->playerOne;
+        $this->playerTwo = $loadedGame->playerTwo;
+        $this->board = $loadedGame->board;
+        $this->dice = $loadedGame->dice;
+        $this->currentTurn = $loadedGame->currentTurn;
+        $this->currentRound = $loadedGame->currentRound;
+        $this->state = $loadedGame->state;
+        $this->winner = $loadedGame->winner;
+
+        return 1;
+    }
 }

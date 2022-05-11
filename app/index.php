@@ -51,6 +51,15 @@ handleActions(function ($action) use ($game, $db) {
             $game = createGame();
             $game->reset();
             break;
+        case ACTION_LOAD:
+            $game = $game->loadGame($db, $_POST['game_id']);
+            if ($game == 0) {
+                echo "Could not find game with ID " . $game;
+            } else if ($game == 1) {
+                echo "Loaded game!";
+            }
+
+            break;
     }
 });
 
@@ -76,5 +85,13 @@ $_SESSION[GAME_SESSION_KEY] = $game;
 
     <input type="hidden" name="action" value="save" />
     <button type="submit"> Save Game </button>
+
+</form>
+
+<form action="" method="post">
+
+    <input type="hidden" name="action" value="load" />
+    <input type="text" name='game_id' placeholder="Game ID" />
+    <button type="submit"> Load Game </button>
 
 </form>
