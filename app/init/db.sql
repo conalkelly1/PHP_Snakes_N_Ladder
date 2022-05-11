@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS game (
+    id int(11) AUTO_INCREMENT NOT NULL,
+    game_data LONGTEXT NOT NULL,
+    created timestamp DEFAULT CURRENT_TIMESTAMP,
+    lastModified timestamp DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE game ENGINE=InnoDB;

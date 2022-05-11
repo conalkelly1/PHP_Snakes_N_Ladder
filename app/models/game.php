@@ -42,13 +42,12 @@ class Game
     private function _rollDice($player)
     {
         $diceRollValue = $this->dice->rollDice();
-        echo "dice roll was " . $diceRollValue ."<br>";
-        if($player->y == 5 && $player->x + $diceRollValue > 5)
-        {
+        echo "dice roll was " . $diceRollValue . "<br>";
+        if ($player->y == 5 && $player->x + $diceRollValue > 5) {
             echo "BUSTED - Lose a Turn";
             return;
         }
-    
+
         $player->x += $diceRollValue;
 
         $rowsToIncrease = intdiv($player->x, 6);
@@ -57,20 +56,16 @@ class Game
 
         $currentTile = $this->getPlayersCurrentTile($player);
 
-        if($currentTile->type == Tile::$TILETYPE_WORMHOLE)
-        {
-            $finalWormholePosition = rand($currentTile->number + 1,count($this->board->tiles) - 1)-1;
+        if ($currentTile->type == Tile::$TILETYPE_WORMHOLE) {
+            $finalWormholePosition = rand($currentTile->number + 1, count($this->board->tiles) - 1) - 1;
             $player->x = $finalWormholePosition % 6;
-            $player->y =  intdiv($finalWormholePosition,6);
-            echo "You found a wormhole! @ ". $currentTile->number ." exiting at ". $finalWormholePosition + 1;
-
-        }
-        elseif($currentTile->type == Tile::$TILETYPE_BLACKHOLE)
-        {
-            $finalBlackholePosition = rand(0,$currentTile->number-1);
+            $player->y =  intdiv($finalWormholePosition, 6);
+            echo "You found a wormhole! @ " . $currentTile->number . " exiting at " . $finalWormholePosition + 1;
+        } elseif ($currentTile->type == Tile::$TILETYPE_BLACKHOLE) {
+            $finalBlackholePosition = rand(0, $currentTile->number - 1);
             $player->x = $finalBlackholePosition % 6;
-            $player->y =  intdiv($finalBlackholePosition,6);
-            echo "You found a Blackhole! @ ". $currentTile->number ." exiting at ". $finalBlackholePosition + 1;
+            $player->y =  intdiv($finalBlackholePosition, 6);
+            echo "You found a Blackhole! @ " . $currentTile->number . " exiting at " . $finalBlackholePosition + 1;
         }
     }
 
@@ -108,5 +103,13 @@ class Game
             }
         </script>
 <?php
+    }
+
+    function saveGame($db)
+    {
+        $serializedGame = serialize($this);
+        $stmt = $db->pdo->prepare("INSERT INTO game(game_data) VALUES(:game)");
+        $stmt->execute([':game' => $serializedGame]);
+        return $db->pdo->lastInsertId();
     }
 }

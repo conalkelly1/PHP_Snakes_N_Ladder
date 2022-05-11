@@ -1,5 +1,7 @@
 <?php
+
 define('GAME_SESSION_KEY', 'game');
+require "system/db.php";
 require "system/actions.php";
 require "system/action_handler.php";
 require "factories/board_factory.php";
@@ -12,8 +14,9 @@ require "models/game.php";
  * SESSION -> Game
  * Game -> Player 1 etc
  */
-
 session_start();
+
+$db = new DB();
 
 function createGame()
 {
@@ -31,7 +34,7 @@ function createGame()
 }
 $game = createGame();
 
-handleActions(function ($action) use ($game) {
+handleActions(function ($action) use ($game, $db) {
     switch ($action) {
         case ACTION_ROLL:
             $game->rollDice();
@@ -40,7 +43,13 @@ handleActions(function ($action) use ($game) {
             session_destroy();
             $game = createGame();
             $game->reset();
-
+            break;
+        case ACTION_SAVE:
+            $gameId = $game->saveGame($db);
+            echo "Game saved! Use game ID " . $gameId . " to load the game!";
+            session_destroy();
+            $game = createGame();
+            $game->reset();
             break;
     }
 });
@@ -60,5 +69,12 @@ $_SESSION[GAME_SESSION_KEY] = $game;
 
     <input type="hidden" name="action" value="reset" />
     <button type="submit"> Reset Game </button>
+
+</form>
+
+<form action="" method="post">
+
+    <input type="hidden" name="action" value="save" />
+    <button type="submit"> Save Game </button>
 
 </form>
