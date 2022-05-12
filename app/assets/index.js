@@ -13,7 +13,7 @@ const saveGameResponse = ref(null);
 const winner = ref(null);
 
 function setVueRefObjects(res) {
-  gameData.value = res.game ?? null;
+  gameData.value = res.game ?? gameData.value;
   wormhole.value = res.wormholeFoundTile
     ? {
         entry: res.wormholeFoundTile,
@@ -66,6 +66,8 @@ createApp({
       saveGameResponse: saveGameResponse,
       winner: winner,
       loadGameIdInput: null,
+      player1Name: null,
+      player2Name: null,
     };
   },
   computed: {
@@ -73,9 +75,11 @@ createApp({
       return this.game?.board;
     },
     getPlayerOne() {
+      this.player1Name = this.game?.playerOne.name;
       return this.game?.playerOne;
     },
     getPlayerTwo() {
+      this.player2Name = this.game?.playerTwo.name;
       return this.game?.playerTwo;
     },
     getPlayerOneTileIndex() {
@@ -101,6 +105,13 @@ createApp({
     },
     resetGame() {
       doActionViaFetch('reset');
+    },
+    startGame() {
+      console.log('start');
+      doActionViaFetch('start', {
+        playerOneName: this.player1Name,
+        playerTwoName: this.player2Name,
+      });
     },
   },
 }).mount('#game');

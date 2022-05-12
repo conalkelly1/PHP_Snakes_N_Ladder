@@ -1,3 +1,5 @@
+USE game;
+
 CREATE TABLE IF NOT EXISTS game (
     id int(11) AUTO_INCREMENT NOT NULL,
     game_data LONGTEXT NOT NULL,
@@ -16,6 +18,6 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     gamesLost int(11) DEFAULT 0,
     quickestWin int(11) DEFAULT 0,
     PRIMARY KEY (id)
-)
+);
 
 ALTER TABLE leaderboard ENGINE=InnoDB;

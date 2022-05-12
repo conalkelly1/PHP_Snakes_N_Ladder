@@ -11,6 +11,7 @@ class JsonResponse
     public $saveGameResponse;
     public $didPlayerBust;
     public $winner;
+    public $leaderboard;
 
     function __construct(
         $game,
@@ -22,7 +23,8 @@ class JsonResponse
         $loadGameResponse,
         $saveGameResponse,
         $didPlayerBust,
-        $winner
+        $winner,
+        $leaderboard
     ) {
         $this->game = $game;
         $this->diceRollValue = $diceRollValue;
@@ -34,5 +36,6 @@ class JsonResponse
         $this->saveGameResponse = $saveGameResponse;
         $this->didPlayerBust = $didPlayerBust;
         $this->winner = $winner;
+        $this->leaderboard = $leaderboard;
     }
 }

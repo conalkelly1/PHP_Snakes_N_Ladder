@@ -12,6 +12,7 @@ class Game
     public $state;
     public $winner;
 
+    public static $STATE_NOT_STARTED = 0;
     public static $STATE_IN_PROGRESS = 1;
     public static $STATE_FINISHED = 2;
 
@@ -37,7 +38,7 @@ class Game
         $winner = $this->checkWin($activePlayer);
 
         $this->currentTurn = $this->currentTurn == Game::$PLAYER_ONE_TURN ? Game::$PLAYER_TWO_TURN : Game::$PLAYER_ONE_TURN;
-
+        $this->currentRound = $this->currentRound + 1;
         $json_response->game = $this;
         $json_response->winner = $winner;
         return $json_response;
@@ -49,7 +50,7 @@ class Game
         // echo "dice roll was " . $diceRollValue . "<br>";
         if ($player->y == 5 && $player->x + $diceRollValue > 5) {
             // echo "BUSTED - Lose a Turn";
-            return new JsonResponse($this, $diceRollValue, null, null, null, null, null, null, true, null);
+            return new JsonResponse($this, $diceRollValue, null, null, null, null, null, null, true, null, null);
         }
 
         $player->x += $diceRollValue;
@@ -79,7 +80,7 @@ class Game
             $blackholeExitPosition = $finalBlackholePosition;
             // echo "You found a Blackhole! @ " . $currentTile->number . " exiting at " . $finalBlackholePosition + 1;
         }
-        return new JsonResponse($this, $diceRollValue, $wormholePosition, $wormholeExitPosition, $blackholePosition, $blackholeExitPosition, null, null, null, null);
+        return new JsonResponse($this, $diceRollValue, $wormholePosition, $wormholeExitPosition, $blackholePosition, $blackholeExitPosition, null, null, null, null, null);
     }
 
     private function getPlayersCurrentTile($player)
@@ -117,6 +118,34 @@ class Game
             }
         </script>
 <?php
+    }
+
+    function addWinForPlayer($db, $player)
+    {
+        $stmt = $db->pdo->prepare("SELECT * FROM leaderboard WHERE player=:playerName");
+        $stmt->execute([":playerName" => $player->name]);
+
+        if (count($stmt->fetchAll())) {
+            $stmt = $db->pdo->prepare("UPDATE leaderboard SET gamesPlayed=gamesPlayed+1, gamesWon=gamesWon+1, quickestWin=LEAST(quickestWin, :currentGameRound) WHERE player=:playerName");
+            $stmt->execute([":currentGameRound" => $this->currentRound, ":playerName" => $player->name]);
+        } else {
+            $stmt = $db->pdo->prepare("INSERT INTO leaderboard(player, gamesPlayed, gamesWon, quickestWin) VALUES(:playerName, 1, 1, :currentGameRound)");
+            $stmt->execute([":currentGameRound" => $this->currentRound, ":playerName" => $player->name]);
+        }
+    }
+
+    function addLossForPlayer($db, $player)
+    {
+        $stmt = $db->pdo->prepare("SELECT * FROM leaderboard WHERE player=:playerName");
+        $stmt->execute([":playerName" => $player->name]);
+
+        if (count($stmt->fetchAll())) {
+            $stmt = $db->pdo->prepare("UPDATE leaderboard SET gamesPlayed=gamesPlayed+1, gamesLost=gamesLost+1 WHERE player=:playerName");
+            $stmt->execute([":playerName" => $player->name]);
+        } else {
+            $stmt = $db->pdo->prepare("INSERT INTO leaderboard(player, gamesPlayed, gamesLost) VALUES(:playerName, 1, 1)");
+            $stmt->execute([":playerName" => $player->name]);
+        }
     }
 
     function saveGame($db)
