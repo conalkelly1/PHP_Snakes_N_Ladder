@@ -9,7 +9,7 @@
 
     <main id="game">
       <div class="header">
-        <div v-if="winner">{{winner}} won the game!!</div>
+        <div v-if="winner && game?.state === 0">{{winner}} won the game!!</div>
       </div>
       <div class="player-entry" v-if="game?.state === 0">
         <div class="form-group">
@@ -77,6 +77,32 @@
           Found a blackhole at {{blackhole.entry}}! Player has teleported to
           {{blackhole.exit+1}}.
         </div>
+      </div>
+      <br />
+      <br />
+      <h3>Leaderboard</h3>
+      <div class="leaderboard">
+        <div class="grid-row">
+          <div>Player</div>
+          <div>Games Played</div>
+          <div>Games Won</div>
+          <div>Games Lost</div>
+          <div>Win / Loss Ratio</div>
+          <div>Quickest Win (rounds)</div>
+        </div>
+        <template v-for="entry in leaderboard?.entries">
+          <div class="grid-row">
+            <div>{{entry.player}}</div>
+            <div>{{entry.gamesPlayed}}</div>
+            <div>{{entry.gamesWon}}</div>
+            <div>{{entry.gamesLost}}</div>
+            <div>
+              {{Number(entry.gamesWon / Math.max(entry.gamesLost,
+              1)).toFixed(2)}}
+            </div>
+            <div>{{entry.quickestWin}}</div>
+          </div>
+        </template>
       </div>
     </main>
 

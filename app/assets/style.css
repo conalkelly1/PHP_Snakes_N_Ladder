@@ -1,6 +1,7 @@
 body {
   background: #000;
   color: #fff;
+  font-family: sans-serif;
 }
 
 button {
@@ -56,4 +57,33 @@ input {
 
 .tile:nth-child(odd) {
   background: linear-gradient(#005299, #7069fb);
+}
+
+.leaderboard {
+  display: grid;
+  grid: auto / auto auto auto auto auto auto;
+  margin-top: 24px;
+}
+
+.grid-row {
+  display: contents;
+}
+
+.grid-row:nth-of-type(even) > div {
+  background: #473f90;
+}
+
+.grid-row:nth-of-type(odd) > div {
+  background: #793f90;
+}
+
+.grid-row:first-of-type > div {
+  background: #005299;
+  border-bottom: 2px solid #fff;
+  font-weight: bolder;
+}
+
+.grid-row > div {
+  padding: 12px;
+  text-align: center;
 }

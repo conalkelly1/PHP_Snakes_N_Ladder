@@ -30,7 +30,7 @@ services:
     depends_on:
       - mysqldb
   mysqldb:
-    image: mysql:latest
+    image: mariadb:latest
     container_name: mysql
     restart: always
     environment:

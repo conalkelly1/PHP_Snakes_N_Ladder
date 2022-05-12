@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS game (
     PRIMARY KEY (id)
 );
 
-ALTER TABLE game ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS leaderboard (
     id int(11) AUTO_INCREMENT NOT NULL,
@@ -20,4 +19,3 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     PRIMARY KEY (id)
 );
 
-ALTER TABLE leaderboard ENGINE=InnoDB;

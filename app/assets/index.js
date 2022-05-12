@@ -11,6 +11,7 @@ const didPlayerBust = ref(null);
 const loadGameResponse = ref(null);
 const saveGameResponse = ref(null);
 const winner = ref(null);
+const leaderboard = ref(null);
 
 function setVueRefObjects(res) {
   gameData.value = res.game ?? gameData.value;
@@ -30,7 +31,8 @@ function setVueRefObjects(res) {
   didPlayerBust.value = res.didPlayerBust ?? null;
   loadGameResponse.value = res.loadGameResponse ?? null;
   saveGameResponse.value = res.saveGameResponse ?? null;
-  winner.value = res.winner ?? null;
+  winner.value = res.winner ?? winner.value;
+  leaderboard.value = res.leaderboard ?? leaderboard.value;
 }
 
 function doActionViaFetch(action, additionalProps) {
@@ -51,6 +53,7 @@ function doActionViaFetch(action, additionalProps) {
 }
 
 doActionViaFetch('getGame');
+doActionViaFetch('getLeaderboard');
 
 createApp({
   data() {
@@ -65,6 +68,7 @@ createApp({
       loadGameResponse: loadGameResponse,
       saveGameResponse: saveGameResponse,
       winner: winner,
+      leaderboard: leaderboard,
       loadGameIdInput: null,
       player1Name: null,
       player2Name: null,
@@ -96,6 +100,7 @@ createApp({
   methods: {
     rollDice() {
       doActionViaFetch('roll');
+      doActionViaFetch('getLeaderboard');
     },
     saveGame() {
       doActionViaFetch('save');

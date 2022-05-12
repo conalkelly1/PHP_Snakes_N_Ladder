@@ -1,4 +1,7 @@
 <?php
+
+
+
 class Leaderboard
 {
     public $entries;
@@ -26,7 +29,7 @@ class Leaderboard
 
     private function sortEntriesByWinLoss()
     {
-        $this->entries = usort($this->entries, function ($a, $b) {
+        uasort($this->entries, function ($a, $b) {
             $aWinLossRatio = $a['gamesWon'] / max($a['gamesLost'], 1);
             $bWinLossRatio = $b['gamesWon'] / max($b['gamesLost'], 1);
 
